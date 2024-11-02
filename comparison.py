@@ -2,6 +2,7 @@ import hashlib
 import bcrypt
 from argon2 import PasswordHasher
 import time
+import psutil
 
 passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'steve123', 'coolpassword', 'password1234', 'helloworld',
              'BrightSky92', 'CoffeeMug247', 'OceanBreeze8', 'SunnyDay101', 'RiverFlow72', 'GreenLeaf2023', 'HappyCat77', 'CalmLake3',
@@ -13,15 +14,19 @@ passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'stev
 
 characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
-def bcrypt_func(password):
+def sha512_hash(password):
+    for password in passwords:
+        hashlib.sha512(password.encode()).hexdigest()
+
+def bcrypt_hash(password):
     for password in passwords:
         bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-def pbkdf2(password):
+def pbkdf2_hash(password):
     for password in passwords:
         hashlib.pbkdf2_hmac('sha256', password.encode(), b'salt', 100000)
 
-def argon2_func(password):
+def argon2_hash(password):
     for password in passwords:
         ph = PasswordHasher()
         ph.hash(password)
@@ -33,9 +38,11 @@ def measure_time(hash_func, passwords):
     return (f'{end_time - start_time:.6f} seconds')
 
 def times():
-    print('Bcrypt:', measure_time(bcrypt_func, passwords))
-    print('PBKDF2:', measure_time(pbkdf2, passwords))
-    print('Argon2:', measure_time(argon2_func, passwords))
+    print('SHA512 - Time:', measure_time(sha512_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
+    print('Bcrypt - Time:', measure_time(bcrypt_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
+    print('PBKDF2 - Time:', measure_time(pbkdf2_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
+    print('Argon2 - Time:', measure_time(argon2_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
 
 if __name__ == '__main__':
     times()
+    # print(run_benchmark())
