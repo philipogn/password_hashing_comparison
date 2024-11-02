@@ -1,30 +1,17 @@
 import hashlib
 import bcrypt
+from argon2 import PasswordHasher
 import time
 
-# passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'password123456', 'password123456789',
-#              'password123456789012', 'password123456789012345', 'password', 'password', 'password', 'password',
-#              'password', 'password', 'password', 'password', 'password', 'password', 'password', 'password',
-#              'password', 'password', 'password', 'password', 'password', 'password', 'password', 'password',
-#              'password', 'password', 'password', 'password', 'password', 'password', 'password', 'password',
-#              'password', 'password', 'password', 'password', 'password', 'password', 'password', 'password',
-#              'password', 'password', 'password', 'password', 'password', 'password', 'password', 'password',]
+passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'steve123', 'coolpassword', 'password1234', 'helloworld',
+             'BrightSky92', 'CoffeeMug247', 'OceanBreeze8', 'SunnyDay101', 'RiverFlow72', 'GreenLeaf2023', 'HappyCat77', 'CalmLake3',
+             'SilverMoon915', 'BlueSkybox4', 'MagicSnow16', 'RainyNight22', 'LuckyStar13', 'DreamWave84', 'WarmSunlight9',
+             'FreshMint64', 'QuietTree291', 'MorningTea5', 'GoldenHills32', 'PeacefulSoul48'
+             ]
 
-passwords = ['hello', 'pass', 'coding', '1234', 'password']
+# passwords = ['hello', 'pass', 'coding', '1234', 'password']
 
 characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
-
-def md5(password):
-    for password in passwords:
-        hashlib.md5(password.encode()).hexdigest()
-
-def sha256(password):
-    for password in passwords:
-        hashlib.sha256(password.encode()).hexdigest()
-
-def sha512(password):
-    for password in passwords:
-        hashlib.sha512(password.encode()).hexdigest()
 
 def bcrypt_func(password):
     for password in passwords:
@@ -34,20 +21,26 @@ def pbkdf2(password):
     for password in passwords:
         hashlib.pbkdf2_hmac('sha256', password.encode(), b'salt', 100000)
 
+def argon2_func(password):
+    for password in passwords:
+        ph = PasswordHasher()
+        ph.hash(password)
+
 def measure_time(hash_func, passwords):
-    start = time.time()
+    start_time = time.perf_counter()
     hashed_passwords = hash_func(passwords)
-    end = time.time()
-    # print(f"Hashing time: {end - start:.6f} seconds")
+    end_time = time.perf_counter()
+    # print(f'Hashing time: {end - start:.6f} seconds')
     # return hashed_passwords
-    return (f"{end - start:.6f} seconds")
+    return (f'{end_time - start_time:.6f} seconds')
 
 def times():
-    print('MD5: ', measure_time(md5, passwords))
-    print('SHA-256: ', measure_time(sha256, passwords))
-    print('SHA-512: ', measure_time(sha512, passwords))
-    print('Bcrypt: ', measure_time(bcrypt_func, passwords))
-    print('PBKDF2: ', measure_time(pbkdf2, passwords))
+    # print('MD5: ', measure_time(md5, passwords))
+    # print('SHA-256: ', measure_time(sha256, passwords))
+    # print('SHA-512: ', measure_time(sha512, passwords))
+    print('Bcrypt:', measure_time(bcrypt_func, passwords))
+    print('PBKDF2:', measure_time(pbkdf2, passwords))
+    print('Argon2:', measure_time(argon2_func, passwords))
 
 if __name__ == '__main__':
     times()
