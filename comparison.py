@@ -28,16 +28,11 @@ def argon2_func(password):
 
 def measure_time(hash_func, passwords):
     start_time = time.perf_counter()
-    hashed_passwords = hash_func(passwords)
+    hash_func(passwords)
     end_time = time.perf_counter()
-    # print(f'Hashing time: {end - start:.6f} seconds')
-    # return hashed_passwords
     return (f'{end_time - start_time:.6f} seconds')
 
 def times():
-    # print('MD5: ', measure_time(md5, passwords))
-    # print('SHA-256: ', measure_time(sha256, passwords))
-    # print('SHA-512: ', measure_time(sha512, passwords))
     print('Bcrypt:', measure_time(bcrypt_func, passwords))
     print('PBKDF2:', measure_time(pbkdf2, passwords))
     print('Argon2:', measure_time(argon2_func, passwords))
