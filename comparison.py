@@ -10,30 +10,31 @@ passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'stev
              'FreshMint64', 'QuietTree291', 'MorningTea5', 'GoldenHills32', 'PeacefulSoul48'
              ]
 
-# passwords = ['hello', 'pass', 'coding', '1234', 'password']
+# passwords = ['helloworld12', 'coding642', '12345', 'password784', 'sunnyhill22', 'flowingriver63', 'greenleaf2023', 'happycat77', 
+#              'calmlake3', 'silvermoon915']
 
 characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
-def sha512_hash(password):
-    for password in passwords:
-        hashlib.sha512(password.encode()).hexdigest()
+def sha512_hash(passwords):
+    for word in passwords:
+        hashlib.sha512(word.encode()).hexdigest()
 
-def bcrypt_hash(password):
-    for password in passwords:
-        bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+def bcrypt_hash(passwords):
+    for word in passwords:
+        bcrypt.hashpw(word.encode(), bcrypt.gensalt())
 
-def pbkdf2_hash(password):
-    for password in passwords:
-        hashlib.pbkdf2_hmac('sha256', password.encode(), b'salt', 100000)
+def pbkdf2_hash(passwords):
+    for word in passwords:
+        hashlib.pbkdf2_hmac('sha256', word.encode(), b'salt', 100000)
 
-def argon2_hash(password):
-    for password in passwords:
+def argon2_hash(passwords):
+    for word in passwords:
         ph = PasswordHasher()
-        ph.hash(password)
+        ph.hash(word)
 
-def measure_time(hash_func, passwords):
+def measure_time(hash_func, words):
     start_time = time.perf_counter()
-    hash_func(passwords)
+    hash_func(words)
     end_time = time.perf_counter()
     return (f'{end_time - start_time:.6f} seconds')
 
