@@ -17,21 +17,22 @@ passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'stev
 # passwords = ["hello", "coding123", "password123", "helloworld"]
 
 def argon2_hash(passwords):
-    ph = PasswordHasher(time_cost=3, memory_cost=65536, parallelism=4)  # Adjusted parameters
+    ph = PasswordHasher(time_cost=10, memory_cost=65536, parallelism=4)  # Higher time and memory cost, parallelism
+  # Adjusted parameters
     for word in passwords:
         ph.hash(word)
 
 def bcrypt_hash(passwords):
     for word in passwords:
-        bcrypt.hashpw(word.encode(), bcrypt.gensalt(rounds=12))  # Adjusted rounds
+        bcrypt.hashpw(word.encode(), bcrypt.gensalt(rounds=9))  # Adjusted rounds
 
 def pbkdf2_hash(passwords):
     for word in passwords:
-        hashlib.pbkdf2_hmac('sha256', word.encode(), b'salt', 200000)  # Adjusted iterations
+        hashlib.pbkdf2_hmac('sha256', word.encode(), b'salt', 600000)  # Adjusted iterations
 
 def scrypt_hash(passwords):
     for word in passwords:
-        scrypt.hash(word, b'salt', N=2**14, r=8, p=1)
+        scrypt.hash(word, b'salt', N=2**14, r=8, p=5)
 
 # Measure execution time
 def measure_time(hash_func, words):
