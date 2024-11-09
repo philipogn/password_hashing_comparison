@@ -54,12 +54,13 @@ def brute_force_all():
         ("PBKDF2", target_hash_pbkdf2, pbkdf2_verify),
         ("scrypt", target_hash_scrypt, scrypt_verify)
     ]:
-        start_time = time.time()
+        start_time = time.perf_counter()
         result = brute_force(algorithm, target_hash, verify_func)
-        end_time = time.time()
+        memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
+        end_time = time.perf_counter()
 
         if result:
-            print(f"{algorithm} - Time taken: {end_time - start_time:.4f} seconds\n")
+            print(f"{algorithm} - Time taken: {end_time - start_time:.4f} seconds | Max memory usage: {memory_usage:.2f} MB\n")
         else:
             print(f"No password found for {algorithm} within {max_length} character limit.\n")
 
