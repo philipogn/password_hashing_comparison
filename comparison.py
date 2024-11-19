@@ -1,5 +1,6 @@
 import hashlib
 import bcrypt
+import scrypt
 from argon2 import PasswordHasher
 import time
 import psutil
@@ -15,35 +16,35 @@ passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'stev
 
 characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
-def sha512_hash(passwords):
-    for word in passwords:
-        hashlib.sha512(word.encode()).hexdigest()
-
-def bcrypt_hash(passwords):
-    for word in passwords:
-        bcrypt.hashpw(word.encode(), bcrypt.gensalt())
-
-def pbkdf2_hash(passwords):
-    for word in passwords:
-        hashlib.pbkdf2_hmac('sha256', word.encode(), b'salt', 100000)
-
 def argon2_hash(passwords):
     for word in passwords:
         ph = PasswordHasher()
         ph.hash(word)
 
+def pbkdf2_hash(passwords):
+    for word in passwords:
+        hashlib.pbkdf2_hmac('sha256', word.encode(), b'salt', 100000)
+
+def bcrypt_hash(passwords):
+    for word in passwords:
+        bcrypt.hashpw(word.encode(), bcrypt.gensalt())
+
+def scrypt_hash(passwords):
+    for word in passwords:
+        scrypt.hash(word, b'salt', N=2**14, r=8, p=5)
+
 def measure_time(hash_func, words):
     start_time = time.perf_counter()
     hash_func(words)
+    memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
     end_time = time.perf_counter()
-    return (f'{end_time - start_time:.6f} seconds')
+    return (f'Time: {end_time - start_time:.6f} seconds, Memory: {memory_usage:.2f} MB')
 
 def times():
-    print('SHA512 - Time:', measure_time(sha512_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
-    print('Bcrypt - Time:', measure_time(bcrypt_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
-    print('PBKDF2 - Time:', measure_time(pbkdf2_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
-    print('Argon2 - Time:', measure_time(argon2_hash, passwords), ', Memory:', psutil.Process().memory_info().rss)
+    print('Argon2 -', measure_time(argon2_hash, passwords))
+    print('Bcrypt -', measure_time(bcrypt_hash, passwords))
+    print('PBKDF2 -', measure_time(pbkdf2_hash, passwords))
+    print('Scrypt -', measure_time(scrypt_hash, passwords))
 
 if __name__ == '__main__':
     times()
-    # print(run_benchmark())
