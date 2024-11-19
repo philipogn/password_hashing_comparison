@@ -7,9 +7,7 @@ import itertools
 import psutil
 
 # Known password to brute-force
-known_password = "abc"
-candidate_chars = "abcdefghijklmnopqrstuvwxyz"  # Character set for brute-force
-max_length = 8  # Maximum password length to try
+known_password = ["password", "qwerty123", "beatles"]
 
 # Hash each password for each algorithm
 ph = PasswordHasher(time_cost=3, memory_cost=12288, parallelism=1)
@@ -19,12 +17,12 @@ target_hash_bcrypt = bcrypt.hashpw(known_password.encode(), bcrypt.gensalt(round
 target_hash_pbkdf2 = hashlib.pbkdf2_hmac('sha256', known_password.encode(), b'salt', 600000)
 target_hash_scrypt = scrypt.hash(known_password, b'salt', N=2**14, r=8, p=5)
 
-def brute_force(algorithm, target_hash, verify_func):
-    for length in range(1, max_length + 1):
-        for candidate in itertools.product(candidate_chars, repeat=length):
-            attempt = ''.join(candidate)
-            if verify_func(attempt, target_hash):
-                return attempt  # Found match
+def dictionary_attack(algorithm, target_hash, verify_func):
+    with open('passwords.txt') as file:
+        for password in file:
+            password = password.strip()
+            if verify_func(password, target_hash):
+                return password  # Found match
     return None  # No match found
 
 # Verification functions
@@ -54,7 +52,7 @@ def brute_force_all():
         ("scrypt", target_hash_scrypt, scrypt_verify)
     ]:
         start_time = time.perf_counter()
-        result = brute_force(algorithm, target_hash, verify_func)
+        result = dictionary_attack(algorithm, target_hash, verify_func)
         memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
         end_time = time.perf_counter()
 
