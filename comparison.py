@@ -14,7 +14,6 @@ passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'stev
 # passwords = ['helloworld12', 'coding642', '12345', 'password784', 'sunnyhill22', 'flowingriver63', 'greenleaf2023', 'happycat77', 
 #              'calmlake3', 'silvermoon915']
 
-characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
 def argon2_hash(passwords):
     for word in passwords:
