@@ -6,15 +6,6 @@ import time
 from argon2 import PasswordHasher
 import matplotlib.pyplot as plt
 
-# passwords = ['hello', 'pass', 'coding', '1234', 'password', 'password123', 'steve123', 'coolpassword', 'password1234', 'helloworld',
-#              'BrightSky92', 'CoffeeMug247', 'OceanBreeze8', 'SunnyDay101', 'RiverFlow72', 'GreenLeaf2023', 'HappyCat77', 'CalmLake3',
-#              'SilverMoon915', 'BlueSkybox4', 'MagicSnow16', 'RainyNight22', 'LuckyStar13', 'DreamWave84', 'WarmSunlight9',
-#              'FreshMint64', 'QuietTree291', 'MorningTea5', 'GoldenHills32', 'PeacefulSoul48', 'hello', 'pass', 'coding', '1234', 'password', 'password123', 'steve123', 'coolpassword', 'password1234', 'helloworld',
-#              'BrightSky92', 'CoffeeMug247', 'OceanBreeze8', 'SunnyDay101', 'RiverFlow72', 'GreenLeaf2023', 'HappyCat77', 'CalmLake3',
-#              'SilverMoon915', 'BlueSkybox4', 'MagicSnow16', 'RainyNight22', 'LuckyStar13', 'DreamWave84', 'WarmSunlight9',
-#              'FreshMint64', 'QuietTree291', 'MorningTea5', 'GoldenHills32', 'PeacefulSoul48']
-
-# passwords = ["hello", "coding123", "password123", "helloworld"]
 
 # passwords = open('1000-most-common-passwords.txt').read().splitlines()
 passwords = open('password-list-top-100.txt').read().splitlines()
@@ -44,11 +35,11 @@ def measure_time(hash_func, words):
     end_time = time.perf_counter()
     return end_time - start_time
 
-def run_time():
-    for func in [argon2_hash, bcrypt_hash, pbkdf2_hash, scrypt_hash]:
-        exec_time = measure_time(func, passwords)
-        memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
-        print(f'{func.__name__} - Time: {exec_time:.4f} seconds, Memory: {memory_usage:.2f} MB')
+# def run_time():
+#     for func in [argon2_hash, bcrypt_hash, pbkdf2_hash, scrypt_hash]:
+#         exec_time = measure_time(func, passwords)
+#         memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
+#         print(f'{func.__name__} - Time: {exec_time:.4f} seconds, Memory: {memory_usage:.2f} MB')
 
 # Run the test multiple times and average the results
 def measure_performance(hash_func, passwords, runs=5):
