@@ -59,6 +59,6 @@ def brute_force_all():
         if result:
             print(f"{algorithm} - Time taken: {end_time - start_time:.4f} seconds | Max memory usage: {memory_usage:.2f} MB\n")
         else:
-            print(f"No password found for {algorithm} within {max_length} character limit.\n")
+            print(f"No password found for {algorithm}.\n")
 
 brute_force_all()
