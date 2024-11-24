@@ -7,7 +7,7 @@ import psutil
 import matplotlib.pyplot as plt
 
 # Known password to brute-force
-known_passwords = ["letmein", "qwertyuiop", "112233", "zxcvbn", "159753"]
+known_passwords = ["trustno1", "qwertyuiop", "112233", "1qaz2wsx", "159753"]
 
 ph = PasswordHasher(time_cost=1, memory_cost=47104, parallelism=1)
 
@@ -40,15 +40,15 @@ def pbkdf2_verify(password, target_hash):
 
 # Simulate brute-force for each password and hashing algorithm
 def brute_force_all(password_list):
-    total_time = {"Argon2": 0, "bcrypt": 0, "PBKDF2": 0, "scrypt": 0}
+    total_time = {"Argon2": 0, "bcrypt": 0, "scrypt": 0, "PBKDF2": 0}
     results = []
 
     for password in password_list:
         # Compute target hashes for the current password
         target_hash_argon2 = ph.hash(password)
         target_hash_bcrypt = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=9))
-        target_hash_pbkdf2 = hashlib.pbkdf2_hmac('sha256', password.encode(), b'salt', 600000)
         target_hash_scrypt = scrypt.hash(password, b'salt', N=2**17, r=8, p=1)
+        target_hash_pbkdf2 = hashlib.pbkdf2_hmac('sha256', password.encode(), b'salt', 600000)
         
         # Test each algorithm
         for algorithm, target_hash, verify_func in [
@@ -96,12 +96,13 @@ times = list(total_time.values())
 
 # Create a bar chart
 plt.figure(figsize=(8, 6))
-plt.bar(algorithms, times)
+plt.bar(algorithms, times, zorder=3)
+plt.grid(axis='y', zorder=0)
 
 # Add labels and title
 plt.xlabel('Hashing Algorithm')
 plt.ylabel('Total Time (seconds)')
-plt.title('Total Time Taken by Each Hashing Algorithm in Dictionary Attack')
+plt.title('Total Time Taken for Dictionary Attack to Crack Algorithms')
 
 # Display the bar chart
 plt.show()
