@@ -33,7 +33,7 @@ def measure_time(hash_func, words):
     return end_time - start_time
 
 # Run the test multiple times and average the results
-def measure_performance(hash_func, passwords, runs=5):
+def measure_performance(hash_func, passwords, runs=None):
     times = []
     memory_usages = []
     
@@ -44,7 +44,7 @@ def measure_performance(hash_func, passwords, runs=5):
         exec_time = measure_time(hash_func, passwords)
         
         memory_after = process.memory_info().rss / (1024 * 1024)  # Convert to MB
-        memory_usage = memory_after - memory_before
+        memory_usage = memory_after# - memory_before
 
         times.append(exec_time)
         memory_usages.append(memory_usage)
@@ -55,7 +55,7 @@ def measure_performance(hash_func, passwords, runs=5):
 
 # measure performance and plot
 def times_and_plot():
-    algorithms = ['Argon2', 'Bcrypt', 'PBKDF2', 'Scrypt']
+    algorithms = ['Argon2', 'Bcrypt', 'Scrypt', 'PBKDF2']
     hash_funcs = [argon2_hash, bcrypt_hash, scrypt_hash, pbkdf2_hash]
     avg_times = []
     avg_memories = []

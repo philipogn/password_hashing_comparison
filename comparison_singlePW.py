@@ -29,7 +29,7 @@ def measure_time(hash_func, words):
     return end_time - start_time
 
 # Run the test multiple times and average the results
-def measure_performance(hash_func, passwords, runs=1):
+def measure_performance(hash_func, passwords, runs=None):
     times = []
     memory_usages = []
     
@@ -40,7 +40,7 @@ def measure_performance(hash_func, passwords, runs=1):
         exec_time = measure_time(hash_func, passwords)
         
         memory_after = process.memory_info().rss / (1024 * 1024)  # Convert to MB
-        memory_usage = memory_after - memory_before
+        memory_usage = memory_after
 
         times.append(exec_time)
         memory_usages.append(memory_usage)
@@ -51,7 +51,7 @@ def measure_performance(hash_func, passwords, runs=1):
 
 # measure performance and plot
 def times_and_plot():
-    algorithms = ['Argon2', 'Bcrypt', 'PBKDF2', 'Scrypt']
+    algorithms = ['Argon2', 'Bcrypt', 'Scrypt', 'PBKDF2']
     hash_funcs = [argon2_hash, bcrypt_hash, scrypt_hash, pbkdf2_hash]
     avg_times = []
     avg_memories = []
@@ -73,7 +73,7 @@ def times_and_plot():
 
     # secondary y-axis for memory usage
     ax2 = ax1.twinx()
-    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='dashed', linewidth=2)
+    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='solid', linewidth=2)
     ax2.set_ylabel('Memory Usage (MB)', color='red')
     ax2.tick_params(axis='y', labelcolor='red')
 
