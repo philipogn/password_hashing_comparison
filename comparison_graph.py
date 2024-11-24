@@ -70,16 +70,23 @@ def times_and_plot():
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
     # Bar plot for execution time
-    ax1.bar(algorithms, avg_times, color='skyblue')
+    ax1.bar(algorithms, avg_times, color='skyblue', zorder=2, label='Execution Time')
     ax1.set_xlabel('Hashing Algorithms')
     ax1.set_ylabel('Execution Time (seconds)', color='blue')
     ax1.tick_params(axis='y', labelcolor='blue')
+    
+    ax1.grid(axis='y', linestyle='-', color='gray', zorder=1)
 
     # secondary y-axis for memory usage
     ax2 = ax1.twinx()
-    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='dashed', linewidth=2)
+    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='dashed', linewidth=2, zorder=3, label='Memory Usage')
     ax2.set_ylabel('Memory Usage (MB)', color='red')
     ax2.tick_params(axis='y', labelcolor='red')
+
+    ax2.grid(False)
+
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
 
     plt.title('Execution Time and Memory Usage of Hashing a List of Passwords')
     plt.show()

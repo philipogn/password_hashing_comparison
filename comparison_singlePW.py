@@ -62,20 +62,29 @@ def times_and_plot():
         avg_memories.append(avg_memory)
         print(f'{func.__name__} - Avg Time: {avg_time:.4f} seconds, Avg Memory: {avg_memory:.2f} MB')
 
-    # plot graph
+    # Plot graph
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
     # Bar plot for execution time
-    ax1.bar(algorithms, avg_times, color='skyblue')
+    ax1.bar(algorithms, avg_times, color='skyblue', zorder=2, label='Execution Time')
     ax1.set_xlabel('Hashing Algorithms')
     ax1.set_ylabel('Execution Time (seconds)', color='blue')
     ax1.tick_params(axis='y', labelcolor='blue')
 
-    # secondary y-axis for memory usage
+    # Add grid lines for primary y-axis
+    ax1.grid(axis='y', linestyle='-', color='gray', zorder=1)
+
+    # Secondary y-axis for memory usage
     ax2 = ax1.twinx()
-    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='solid', linewidth=2)
+    ax2.plot(algorithms, avg_memories, color='red', marker='o', linestyle='solid', linewidth=2, zorder=3, label='Memory Usage')
     ax2.set_ylabel('Memory Usage (MB)', color='red')
     ax2.tick_params(axis='y', labelcolor='red')
+
+    # Use the same grid lines for the secondary y-axis
+    ax2.grid(False)  # Disable separate grid for ax2
+
+    ax1.legend(loc='upper left')  # Legend for the bar chart
+    ax2.legend(loc='upper right')  # Legend for the line plot
 
     plt.title('Execution Time and Memory Usage of Hashing One Password')
     plt.show()
