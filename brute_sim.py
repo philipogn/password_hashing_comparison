@@ -5,6 +5,8 @@ from argon2 import PasswordHasher, exceptions
 import time
 import psutil
 import matplotlib.pyplot as plt
+import scipy.stats as stats
+import csv
 
 # Known password to brute-force
 known_passwords = ["trustno1", "qwertyuiop", "112233", "1qaz2wsx", "159753"]
@@ -41,6 +43,7 @@ def pbkdf2_verify(password, target_hash):
 # Simulate brute-force for each password and hashing algorithm
 def brute_force_all(password_list):
     total_time = {"Argon2": 0, "bcrypt": 0, "scrypt": 0, "PBKDF2": 0}
+    time_lists = {"Argon2": [], "bcrypt": [], "scrypt": [], "PBKDF2": []}
     results = []
 
     for password in password_list:
@@ -56,35 +59,35 @@ def brute_force_all(password_list):
             ("bcrypt", target_hash_bcrypt, bcrypt_verify),
             ("scrypt", target_hash_scrypt, scrypt_verify),
             ("PBKDF2", target_hash_pbkdf2, pbkdf2_verify)
-            
         ]:
             start_time = time.perf_counter()
             result = dictionary_attack(target_hash, verify_func)
             memory_usage = psutil.Process().memory_info().rss / (1024 * 1024)  # convert to MB
             end_time = time.perf_counter()
 
-            # Accumulate total time for the algorithm
-            total_time[algorithm] += end_time - start_time
+            # Calculate time taken
+            time_taken = end_time - start_time
+            total_time[algorithm] += time_taken
+            time_lists[algorithm].append(time_taken)  # Append to the respective list
 
             # Store results
             results.append({
                 "Password": password,
                 "Algorithm": algorithm,
                 "Found": result if result else "Not found",
-                "Time (s)": f"{end_time - start_time:.4f}",
+                "Time (s)": f"{time_taken:.4f}",
                 "Memory (MB)": f"{memory_usage:.2f}"
             })
+    
+    return results, total_time, time_lists
 
-    return results, total_time
+results, total_time, time_lists = brute_force_all(known_passwords)
 
-# Run the brute-force simulation
-results, total_time = brute_force_all(known_passwords)
-
-# # Print results
-# for result in results:
-#     print(f"Password: {result['Password']} | Algorithm: {result['Algorithm']} | "
-#           f"Found: {result['Found']} | Time: {result['Time (s)']} seconds | "
-#           f"Memory: {result['Memory (MB)']} MB")
+# Print results
+for result in results:
+    print(f"Password: {result['Password']} | Algorithm: {result['Algorithm']} | "
+          f"Found: {result['Found']} | Time: {result['Time (s)']} seconds | "
+          f"Memory: {result['Memory (MB)']} MB")
 
 # Print total time per algorithm
 print("\nTotal Time per Algorithm:")
@@ -106,3 +109,30 @@ plt.title('Total Time Taken for Dictionary Attack to Crack Algorithms')
 
 # Display the bar chart
 plt.show()
+
+def save_to_csv(results, filename="brute_force_results.csv"):
+    algorithms = ["Argon2", "bcrypt", "scrypt", "PBKDF2"]
+
+    # Create a dictionary to organize data by password and algorithm
+    data = {password: {algorithm: 0 for algorithm in algorithms} for password in known_passwords}
+
+    for result in results:
+        password = result["Password"]
+        algorithm = result["Algorithm"]
+        time_taken = result["Time (s)"]
+        data[password][algorithm] = time_taken
+
+    # Write to CSV
+    with open(filename, mode="w", newline="") as file:
+        writer = csv.writer(file)
+
+        # Write header
+        writer.writerow(["Password"] + algorithms)
+
+        # Write rows
+        for password, times in data.items():
+            row = [password] + [times[algorithm] for algorithm in algorithms]
+            writer.writerow(row)
+
+    print(f"Results saved to {filename}")
+save_to_csv(results)
